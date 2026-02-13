@@ -2,6 +2,7 @@
 
 # 3.1 N-Grams
 Mô hình xác suất, N gram là tính xác suất dựa trên n-1 từ trước đó
+
 $$
 P(w_{1:n}) = P(w_1)P(w_2|w_1)P(w_3|w_{1:2})\dots P(w_n|w_{1:n-1}) \\
 = \prod_{k=1}^{n} P(w_k|w_{1:k-1})
@@ -52,18 +53,25 @@ Gen dựa vào xác suất của Unigram, bigram, trigram,...
 
 # 3.5 Generalizing vs. overfitting the training set
 Khi tập train quá ít, mà dùng trigram 4-gram sẽ huấn luyện tốt trên train nhưng đó là học thuộc, không hiệu quả trên test
+
 Các tập train khác nhau cho ra output khác nhau
+
 Vì vậy khi huấn luyện model cần lựa tập train phù hợp với task
+
 Cách xử lý khi test gặp word unseen: dựa trên subword tokens
+
 Để tiện lợi thì chapter này dùng word thay cho token
 
 # 3.6 Smoothing, Interpolation, and Backoff
 Mô hình sẽ sai sót khi gặp những câu hợp lý nhưng chưa xuất hiện trong train, và gán xác suất nó thấp, thậm chí bằng 0
+
 Nếu 1 xs=0 thì xs cả tập test bằng 0, điều này dẫn đến sai sót
+
 Vì vậy cần có các biện pháp phòng tránh
 
 ## 3.6.1 Laplace Smoothing
 Add tất cả thêm 1 để tránh xác suất bằng 0
+
 $
 P_{\text{Laplace}}(w_n|w_{n-1}) = \frac{C(w_{n-1}w_n) + 1}{C(w_{n-1}) + V} = \frac{C^*(w_{n-1}w_n)}{C(w_{n-1})}
 $
@@ -86,6 +94,7 @@ $$
 Nếu dùng trigram mà xác suất =0, có thể dùng bigram thay thế, tương tự có thể dùng unigram để thay thế
 
 Điều đó có nghĩa là ta dùng cách tổ hợp có trọng số giữa các xác suất n gram
+
 $$
 \begin{equation}
 \hat{P}(w_n | w_{n-2} w_{n-1}) = 
@@ -110,6 +119,7 @@ Gồm có simple interpolation và conditional interpolation
 Tính các lambda bằng held-out corpus
 
 ## 3.6.4 Stupid Backoff
+
 \[
 S(w_i \mid w_{i-N+1:i-1}) =
 \begin{cases}
@@ -127,6 +137,7 @@ H(X) = - \sum_{x \in \chi} p(x) \log_2 p(x)
 $$
 
 Entropy trong language model:
+
 $$
 \frac{1}{n} H(w_{1:n}) = - \frac{1}{n} \sum_{w_{1:n} \in L} p(w_{1:n}) \log p(w_{1:n}) 
 $$
@@ -142,6 +153,7 @@ H(L) &= \lim_{n \to \infty} \frac{1}{n} H(w_{1:n}) \\
 $$
 
 Khi có 1 câu đủ dài thì được công thức sau
+
 $$
 H(L) = \lim_{n \to \infty} -\frac{1}{n} \log p(w_{1:n})
 $$
