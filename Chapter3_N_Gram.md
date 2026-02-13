@@ -72,13 +72,13 @@ Vì vậy cần có các biện pháp phòng tránh
 ## 3.6.1 Laplace Smoothing
 Add tất cả thêm 1 để tránh xác suất bằng 0
 
-$
+$$
 P_{\text{Laplace}}(w_n|w_{n-1}) = \frac{C(w_{n-1}w_n) + 1}{C(w_{n-1}) + V} = \frac{C^*(w_{n-1}w_n)}{C(w_{n-1})}
-$
+$$
 
-$
+$$
 C^*(w_{n-1}w_n) = \frac{[C(w_{n-1}w_n) + 1] \times C(w_{n-1})}{C(w_{n-1}) + V}
-$
+$$
 
 Thay ratio giữa new và old thay đổi quá nhiều
 ## 3.6.2 Add-k smoothing
@@ -108,7 +108,7 @@ $$
 
 $$
 \begin{aligned}
-\hat{P}(w_n | w_{n-2} w_{n-1}) = \,\, & \lambda_1(w_{n-2:n-1}) P(w_n) \\
+\hat{P}(w_n | w_{n-2} w_{n-1}) = & \lambda_1(w_{n-2:n-1}) P(w_n) \\
 & + \lambda_2(w_{n-2:n-1}) P(w_n | w_{n-1}) \\
 & + \lambda_3(w_{n-2:n-1}) P(w_n | w_{n-2} w_{n-1})
 \end{aligned}
