@@ -120,7 +120,7 @@ Tính các lambda bằng held-out corpus
 
 ## 3.6.4 Stupid Backoff
 
-\[
+$$
 S(w_i \mid w_{i-N+1:i-1}) =
 \begin{cases}
 \dfrac{\mathrm{count}(w_{i-N+1:i})}
@@ -129,7 +129,7 @@ S(w_i \mid w_{i-N+1:i-1}) =
 \lambda \, S(w_i \mid w_{i-N+2:i-1}),
 & \text{otherwise}
 \end{cases}
-\]
+$$
 
 # 3.7 Advanced: Perplexity’s Relation to Entropy
 $$
