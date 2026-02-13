@@ -71,3 +71,79 @@ $
 $
 C^*(w_{n-1}w_n) = \frac{[C(w_{n-1}w_n) + 1] \times C(w_{n-1})}{C(w_{n-1}) + V}
 $
+
+Thay ratio giữa new và old thay đổi quá nhiều
+## 3.6.2 Add-k smoothing
+Thay vì add 1 thì add k (k có thể < 1)
+
+Hiệu quả trong 1 số task (bao gồm phân loại text). Nhưng không hiệu quả trong language model vì nó có phương sai kém và tạo ra mức giảm không phù hợp
+
+$$
+P_{\text{Add-k}}^*(w_n|w_{n-1}) = \frac{C(w_{n-1}w_n) + k}{C(w_{n-1}) + kV}
+$$
+
+## 3.6.3 Language Model Interpolation
+Nếu dùng trigram mà xác suất =0, có thể dùng bigram thay thế, tương tự có thể dùng unigram để thay thế
+
+Điều đó có nghĩa là ta dùng cách tổ hợp có trọng số giữa các xác suất n gram
+$$
+\begin{equation}
+\hat{P}(w_n | w_{n-2} w_{n-1}) = 
+\begin{aligned}
+    & \lambda_1 P(w_n) \\
+    & + \lambda_2 P(w_n | w_{n-1}) \\
+    & + \lambda_3 P(w_n | w_{n-2} w_{n-1})
+\end{aligned}
+\end{equation}
+$$
+
+$$
+\begin{aligned}
+\hat{P}(w_n | w_{n-2} w_{n-1}) = \,\, & \lambda_1(w_{n-2:n-1}) P(w_n) \\
+& + \lambda_2(w_{n-2:n-1}) P(w_n | w_{n-1}) \\
+& + \lambda_3(w_{n-2:n-1}) P(w_n | w_{n-2} w_{n-1})
+\end{aligned}
+$$
+
+Gồm có simple interpolation và conditional interpolation
+
+Tính các lambda bằng held-out corpus
+
+## 3.6.4 Stupid Backoff
+\[
+S(w_i \mid w_{i-N+1:i-1}) =
+\begin{cases}
+\dfrac{\mathrm{count}(w_{i-N+1:i})}
+      {\mathrm{count}(w_{i-N+1:i-1})},
+& \text{if } \mathrm{count}(w_{i-N+1:i}) > 0 \\[10pt]
+\lambda \, S(w_i \mid w_{i-N+2:i-1}),
+& \text{otherwise}
+\end{cases}
+\]
+
+# 3.7 Advanced: Perplexity’s Relation to Entropy
+$$
+H(X) = - \sum_{x \in \chi} p(x) \log_2 p(x)
+$$
+
+Entropy trong language model:
+$$
+\frac{1}{n} H(w_{1:n}) = - \frac{1}{n} \sum_{w_{1:n} \in L} p(w_{1:n}) \log p(w_{1:n}) 
+$$
+
+to measure the true entropy of a language, we need to consider sequences of 
+infinite length:
+
+$$
+\begin{aligned}
+H(L) &= \lim_{n \to \infty} \frac{1}{n} H(w_{1:n}) \\
+&= - \lim_{n \to \infty} \frac{1}{n} \sum_{W \in L} p(w_{1:n}) \log p(w_{1:n})
+\end{aligned}
+$$
+
+Khi có 1 câu đủ dài thì được công thức sau
+$$
+H(L) = \lim_{n \to \infty} -\frac{1}{n} \log p(w_{1:n})
+$$
+
+Các model n-gram đều stationary, nhưng natural language không có stationary
