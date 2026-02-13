@@ -125,7 +125,7 @@ S(w_i \mid w_{i-N+1:i-1}) =
 \begin{cases}
 \dfrac{\mathrm{count}(w_{i-N+1:i})}
       {\mathrm{count}(w_{i-N+1:i-1})},
-& \text{if } \mathrm{count}(w_{i-N+1:i}) > 0 \\[10pt]
+& \text{if } \mathrm{count}(w_{i-N+1:i}) > 0 \\[10pt] //
 \lambda \, S(w_i \mid w_{i-N+2:i-1}),
 & \text{otherwise}
 \end{cases}
