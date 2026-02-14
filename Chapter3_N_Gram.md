@@ -159,3 +159,25 @@ H(L) = \lim_{n \to \infty} -\frac{1}{n} \log p(w_{1:n})
 $$
 
 Các model n-gram đều stationary, nhưng natural language không có stationary
+
+Cross-entropy của mô hình m đối với phân phối p được định nghĩa như sau:
+
+$$H(p, m) = \lim_{n \to \infty} -\frac{1}{n} \sum_{w \in L} p(w_1, \ldots, w_n) \log m(w_1, \ldots, w_n)$$
+
+Dựa trên định lý Shannon:
+
+$$H(p, m) = \lim_{n \to \infty} -\frac{1}{n} \log m(w_1 w_2 \ldots w_n)$$
+
+Điều làm cho Cross-entropy trở nên hữu ích chính là việc $H(p, m)$ luôn là một giới hạn trên (upper bound) của entropy $H(p)$. Với mọi mô hình $m$, ta luôn có:
+
+$$H(p) \leq H(p, m)$$
+
+Cross-entropy được định nghĩa trong giới hạn khi chiều dài của chuỗi từ quan sát được tiến tới vô cùng. Chúng ta xấp xỉ giá trị cross-entropy này bằng cách dựa trên một chuỗi có độ dài cố định (đủ dài). Giá trị xấp xỉ cross-entropy của một mô hình $M = P(w_i | w_{i-N+1:i-1})$ trên một chuỗi từ $W$ là:
+
+$$H(W) = -\frac{1}{N} \log P(w_1 w_2 \ldots w_N) \tag{3.42}$$
+
+Định nghĩa Perplexity
+
+Perplexity của một mô hình $P$ trên một chuỗi từ $W$ hiện được định nghĩa chính thức là 2 lũy thừa với bậc là cross-entropy này:
+
+$$\begin{aligned} \text{Perplexity}(W) &= 2^{H(W)} \\ &= P(w_1 w_2 \ldots w_N)^{-\frac{1}{N}} \\ &= \sqrt[N]{\frac{1}{P(w_1 w_2 \ldots w_N)}} \end{aligned}$$
