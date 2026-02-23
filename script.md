@@ -10,14 +10,14 @@
 - Tính xác suất của câu  
 - Đánh giá mô hình bằng perplexity  
 
-Câu hỏi đặt ra là:
+Bây giờ chúng ta chuyển sang một câu hỏi quan trọng hơn:
 
-Nếu mô hình đã học được phân phối xác suất của các từ,
+Nếu mô hình đã học được phân phối xác suất của các từ,  
 liệu ta có thể dùng nó để sinh ra câu mới không?
 
-Câu trả lời là: Có.
+Câu trả lời là: Có.  
 
-Quá trình đó được gọi là **sampling**.
+Và quá trình đó được gọi là **sampling**.
 
 ---
 
@@ -28,17 +28,26 @@ Sampling là quá trình:
 > Chọn từ tiếp theo dựa trên phân phối xác suất mà mô hình đã học.
 
 Ví dụ:
+
 ```
-P(love | I) = 0.7  
-P(hate | I) = 0.3  
+
+P(love | I) = 0.7
+P(hate | I) = 0.3
+
 ```
-Khi sinh câu, ta không luôn chọn “love”.
-Ta chọn ngẫu nhiên theo tỷ lệ 70% – 30%.
+
+Điều này có nghĩa là:
+
+- 70% khả năng chọn “love”  
+- 30% khả năng chọn “hate”  
+
+Khi sinh câu, ta không luôn chọn từ có xác suất cao nhất.  
+Ta chọn theo phân phối xác suất.
 
 Điều này giúp:
 
-- Câu sinh ra phản ánh đúng phân phối xác suất  
-- Tạo được sự đa dạng  
+- Phản ánh đúng bản chất xác suất của mô hình  
+- Tạo ra sự đa dạng trong câu sinh ra  
 
 ---
 
@@ -46,13 +55,19 @@ Ta chọn ngẫu nhiên theo tỷ lệ 70% – 30%.
 
 Quy trình gồm ba bước chính.
 
+---
+
 ### Bước 1: Bắt đầu với ký hiệu bắt đầu câu `<s>`
 
 Ví dụ:
+
 ```
-P(I | <s>) = 0.6  
-P(The | <s>) = 0.4  
+
+P(I | <s>) = 0.6
+P(The | <s>) = 0.4
+
 ```
+
 Ta chọn một từ theo phân phối này.
 
 ---
@@ -66,10 +81,14 @@ Ta tính:
 P(w | I)
 
 Ví dụ:
+
 ```
-P(love | I) = 0.7  
-P(hate | I) = 0.3  
+
+P(love | I) = 0.7
+P(hate | I) = 0.3
+
 ```
+
 Ta tiếp tục chọn một từ theo xác suất tương ứng.
 
 ---
@@ -85,25 +104,36 @@ Quy trình lặp lại:
 Quá trình kết thúc khi sinh ra ký hiệu kết thúc câu.
 
 Ví dụ:
+
 ```
+
 <s> → I → love → NLP → </s>
+
 ```
+
+Đây chính là cách một N-gram model sinh câu.
+
 ---
 
 ## 4. Sampling và Greedy Decoding
 
 Có hai chiến lược phổ biến để chọn từ tiếp theo.
 
+---
+
 ### 4.1 Greedy
 
 Luôn chọn từ có xác suất cao nhất.
 
 Ưu điểm:
+
 - Câu thường hợp lý hơn  
 
 Nhược điểm:
+
 - Thiếu đa dạng  
 - Dễ lặp  
+- Có thể bị “kẹt” vào một chuỗi cố định  
 
 ---
 
@@ -112,45 +142,103 @@ Nhược điểm:
 Chọn từ theo phân phối xác suất.
 
 Ưu điểm:
+
 - Tạo nhiều câu khác nhau  
-- Phản ánh đúng bản chất xác suất  
+- Phản ánh đúng bản chất mô hình xác suất  
 
 Nhược điểm:
+
 - Có thể sinh câu kém tự nhiên  
+
+Trong thực tế, các mô hình hiện đại thường dùng sampling có kiểm soát,
+ví dụ như temperature hoặc top-k sampling.
 
 ---
 
 ## 5. Hạn chế của N-gram khi sinh câu
+
+---
 
 ### 5.1 Ngữ cảnh ngắn
 
 Bigram chỉ xét một từ trước đó.  
 Trigram chỉ xét hai từ trước đó.
 
-Mô hình không nắm được phụ thuộc dài hạn.
+Do đó, mô hình không nắm được phụ thuộc dài hạn.
 
 ---
 
-### 5.2 Không hiểu ngữ pháp sâu
+### 5.2 Không hiểu ngữ pháp và ngữ nghĩa
 
-Mô hình chỉ học xác suất, không hiểu cấu trúc ngữ pháp.
+Mô hình chỉ học xác suất, không hiểu cấu trúc ngữ pháp sâu.
 
 Ví dụ có thể sinh:
 
 “The cat love I.”
 
-Vì xác suất cục bộ có thể cao,
+Vì xác suất cục bộ có thể cao,  
 nhưng cấu trúc toàn câu sai.
 
 ---
 
-## 6. Ý nghĩa của phần 3.4
+## 6. Vấn đề OOV khi sinh câu
+
+Một câu hỏi quan trọng:
+
+Điều gì xảy ra nếu một từ chưa từng xuất hiện trong training set,
+nhưng lại xuất hiện khi sinh câu hoặc trong test set?
+
+Ví dụ: từ “Jurafsky”.
+
+Trong N-gram truyền thống:
+
+- Từ này không có trong vocabulary  
+- Xác suất bằng 0  
+- Toàn bộ xác suất câu có thể bằng 0  
+
+Đây gọi là vấn đề **Out-of-Vocabulary (OOV)**.
+
+---
+
+### Giải pháp cổ điển
+
+Thay mọi từ hiếm bằng token `<UNK>`.
+
+Nhưng cách này:
+
+- Mất thông tin  
+- Không phân biệt được các từ mới khác nhau  
+
+---
+
+### Giải pháp hiện đại: Subword Tokenization
+
+Các mô hình NLP hiện đại không làm việc trực tiếp trên từ nguyên bản.
+
+Chúng tách từ thành các đơn vị con (subword).
+
+Ví dụ:
+
+“Jurafsky”  
+có thể được tách thành các phần nhỏ hơn như:
+
+- Jura  
+- fsky  
+
+Nhờ đó:
+
+- Không còn token hoàn toàn xa lạ  
+- Giảm đáng kể vấn đề OOV  
+
+---
+
+## 7. Ý nghĩa của phần 3.4
 
 Phần này cho thấy:
 
 Language model là một **generative model**.
 
-Nó không chỉ đánh giá câu,
+Nó không chỉ đánh giá câu,  
 mà còn có thể tạo câu mới dựa trên phân phối đã học.
 
 Đây là nền tảng cho:
@@ -180,6 +268,7 @@ Hoạt động tốt trên dữ liệu mới.
 Khả năng này gọi là **generalization**.
 
 Generalization nghĩa là:
+
 Mô hình có thể khái quát hóa sang dữ liệu chưa từng thấy.
 
 ---
@@ -193,7 +282,7 @@ Overfitting xảy ra khi:
 
 Điều này có nghĩa:
 
-Mô hình đã học thuộc dữ liệu huấn luyện,
+Mô hình đã học thuộc dữ liệu huấn luyện,  
 nhưng không học được quy luật tổng quát.
 
 ---
@@ -204,11 +293,11 @@ Khi ta tăng N:
 
 Bigram → Trigram → 4-gram → 5-gram
 
-Mô hình trở nên phức tạp hơn.
+Mô hình trở nên phức tạp hơn.  
 Số lượng tham số tăng rất nhanh.
 
-Nếu dữ liệu không đủ lớn,
-mô hình sẽ ghi nhớ các chuỗi cụ thể,
+Nếu dữ liệu không đủ lớn,  
+mô hình sẽ ghi nhớ các chuỗi cụ thể,  
 thay vì học cấu trúc chung.
 
 ---
@@ -280,7 +369,7 @@ So sánh:
 - Training perplexity  
 - Test perplexity  
 
-Nếu training rất thấp nhưng test cao,
+Nếu training rất thấp nhưng test cao,  
 mô hình đang overfit.
 
 ---
@@ -308,3 +397,4 @@ Không phải mô hình càng phức tạp càng tốt.
 
 Điều quan trọng nhất là khả năng generalization,
 tức là hoạt động tốt trên dữ liệu mới.
+```
