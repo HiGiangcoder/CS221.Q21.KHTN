@@ -28,10 +28,10 @@ Sampling là quá trình:
 > Chọn từ tiếp theo dựa trên phân phối xác suất mà mô hình đã học.
 
 Ví dụ:
-
+```
 P(love | I) = 0.7  
 P(hate | I) = 0.3  
-
+```
 Khi sinh câu, ta không luôn chọn “love”.
 Ta chọn ngẫu nhiên theo tỷ lệ 70% – 30%.
 
@@ -49,10 +49,10 @@ Quy trình gồm ba bước chính.
 ### Bước 1: Bắt đầu với ký hiệu bắt đầu câu `<s>`
 
 Ví dụ:
-
+```
 P(I | <s>) = 0.6  
 P(The | <s>) = 0.4  
-
+```
 Ta chọn một từ theo phân phối này.
 
 ---
@@ -66,10 +66,10 @@ Ta tính:
 P(w | I)
 
 Ví dụ:
-
+```
 P(love | I) = 0.7  
 P(hate | I) = 0.3  
-
+```
 Ta tiếp tục chọn một từ theo xác suất tương ứng.
 
 ---
@@ -85,9 +85,9 @@ Quy trình lặp lại:
 Quá trình kết thúc khi sinh ra ký hiệu kết thúc câu.
 
 Ví dụ:
-
+```
 <s> → I → love → NLP → </s>
-
+```
 ---
 
 ## 4. Sampling và Greedy Decoding
