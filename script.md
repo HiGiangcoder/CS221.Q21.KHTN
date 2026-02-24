@@ -181,58 +181,9 @@ nhưng cấu trúc toàn câu sai.
 
 ---
 
-## 6. Vấn đề OOV khi sinh câu
-
-Một câu hỏi quan trọng:
-
-Điều gì xảy ra nếu một từ chưa từng xuất hiện trong training set,
-nhưng lại xuất hiện khi sinh câu hoặc trong test set?
-
-Ví dụ: từ “Jurafsky”.
-
-Trong N-gram truyền thống:
-
-- Từ này không có trong vocabulary  
-- Xác suất bằng 0  
-- Toàn bộ xác suất câu có thể bằng 0  
-
-Đây gọi là vấn đề **Out-of-Vocabulary (OOV)**.
-
 ---
 
-### Giải pháp cổ điển
-
-Thay mọi từ hiếm bằng token `<UNK>`.
-
-Nhưng cách này:
-
-- Mất thông tin  
-- Không phân biệt được các từ mới khác nhau  
-
----
-
-### Giải pháp hiện đại: Subword Tokenization
-
-Các mô hình NLP hiện đại không làm việc trực tiếp trên từ nguyên bản.
-
-Chúng tách từ thành các đơn vị con (subword).
-
-Ví dụ:
-
-“Jurafsky”  
-có thể được tách thành các phần nhỏ hơn như:
-
-- Jura  
-- fsky  
-
-Nhờ đó:
-
-- Không còn token hoàn toàn xa lạ  
-- Giảm đáng kể vấn đề OOV  
-
----
-
-## 7. Ý nghĩa của phần 3.4
+## 6. Ý nghĩa của phần 3.4
 
 Phần này cho thấy:
 
@@ -389,7 +340,60 @@ Smoothing giúp:
 
 ---
 
-## 9. Ý nghĩa của phần 3.5
+
+## 9. Vấn đề OOV khi sinh câu
+
+Một câu hỏi quan trọng:
+
+Điều gì xảy ra nếu một từ chưa từng xuất hiện trong training set,
+nhưng lại xuất hiện khi sinh câu hoặc trong test set?
+
+Ví dụ: từ “Jurafsky”.
+
+Trong N-gram truyền thống:
+
+- Từ này không có trong vocabulary  
+- Xác suất bằng 0  
+- Toàn bộ xác suất câu có thể bằng 0  
+
+Đây gọi là vấn đề **Out-of-Vocabulary (OOV)**.
+
+---
+
+### Giải pháp cổ điển
+
+Thay mọi từ hiếm bằng token `<UNK>`.
+
+Nhưng cách này:
+
+- Mất thông tin  
+- Không phân biệt được các từ mới khác nhau  
+
+---
+
+### Giải pháp hiện đại: Subword Tokenization
+
+Các mô hình NLP hiện đại không làm việc trực tiếp trên từ nguyên bản.
+
+Chúng tách từ thành các đơn vị con (subword).
+
+Ví dụ:
+
+“Jurafsky”  
+có thể được tách thành các phần nhỏ hơn như:
+
+- Jura  
+- fsky  
+
+Nhờ đó:
+
+- Không còn token hoàn toàn xa lạ  
+- Giảm đáng kể vấn đề OOV  
+
+
+---
+
+## 10. Ý nghĩa của phần 3.5
 
 Phần này nhấn mạnh rằng:
 
