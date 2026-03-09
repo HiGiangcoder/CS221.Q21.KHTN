@@ -2,403 +2,317 @@
 
 ---
 
-## 1. Mục tiêu của phần 3.4
+## 1. Vì sao cần Sampling?
 
-Ở các phần trước, chúng ta đã:
+Một cách quan trọng để hiểu một language model “biết” điều gì là **lấy mẫu (sample)** từ nó.
 
-- Xây dựng N-gram language model  
-- Tính xác suất của câu  
-- Đánh giá mô hình bằng perplexity  
+Language model biểu diễn một **phân phối xác suất trên các câu**.
 
-Bây giờ chúng ta chuyển sang một câu hỏi quan trọng hơn:
+Sampling từ một phân phối nghĩa là:
 
-Nếu mô hình đã học được phân phối xác suất của các từ,  
-liệu ta có thể dùng nó để sinh ra câu mới không?
+> Chọn ngẫu nhiên các điểm theo đúng xác suất của chúng.
 
-Câu trả lời là: Có.  
+Do đó, sampling từ language model nghĩa là:
 
-Và quá trình đó được gọi là **sampling**.
-
----
-
-## 2. Sampling là gì?
-
-Sampling là quá trình:
-
-> Chọn từ tiếp theo dựa trên phân phối xác suất mà mô hình đã học.
-
-Ví dụ:
-
-```
-
-P(love | I) = 0.7
-P(hate | I) = 0.3
-
-```
-
-Điều này có nghĩa là:
-
-- 70% khả năng chọn “love”  
-- 30% khả năng chọn “hate”  
-
-Khi sinh câu, ta không luôn chọn từ có xác suất cao nhất.  
-Ta chọn theo phân phối xác suất.
-
-Điều này giúp:
-
-- Phản ánh đúng bản chất xác suất của mô hình  
-- Tạo ra sự đa dạng trong câu sinh ra  
-
----
-
-## 3. Thuật toán sinh câu với Bigram Model
-
-Quy trình gồm ba bước chính.
-
----
-
-### Bước 1: Bắt đầu với ký hiệu bắt đầu câu `<s>`
-
-Ví dụ:
-
-```
-
-P(I | <s>) = 0.6
-P(The | <s>) = 0.4
-
-```
-
-Ta chọn một từ theo phân phối này.
-
----
-
-### Bước 2: Sinh từ tiếp theo
-
-Giả sử ta đã chọn “I”.
-
-Ta tính:
-
-P(w | I)
-
-Ví dụ:
-
-```
-
-P(love | I) = 0.7
-P(hate | I) = 0.3
-
-```
-
-Ta tiếp tục chọn một từ theo xác suất tương ứng.
-
----
-
-### Bước 3: Lặp lại cho đến khi gặp `</s>`
-
-Quy trình lặp lại:
-
-- Dùng từ vừa sinh làm ngữ cảnh  
-- Lấy phân phối xác suất mới  
-- Chọn ngẫu nhiên  
-
-Quá trình kết thúc khi sinh ra ký hiệu kết thúc câu.
-
-Ví dụ:
-
-```
-
-<s> → I → love → NLP → </s>
-
-```
-
-Đây chính là cách một N-gram model sinh câu.
-
----
-
-## 4. Sampling và Greedy Decoding
-
-Có hai chiến lược phổ biến để chọn từ tiếp theo.
-
----
-
-### 4.1 Greedy
-
-Luôn chọn từ có xác suất cao nhất.
-
-Ưu điểm:
-
-- Câu thường hợp lý hơn  
-
-Nhược điểm:
-
-- Thiếu đa dạng  
-- Dễ lặp  
-- Có thể bị “kẹt” vào một chuỗi cố định  
-
----
-
-### 4.2 Sampling
-
-Chọn từ theo phân phối xác suất.
-
-Ưu điểm:
-
-- Tạo nhiều câu khác nhau  
-- Phản ánh đúng bản chất mô hình xác suất  
-
-Nhược điểm:
-
-- Có thể sinh câu kém tự nhiên  
-
-Trong thực tế, các mô hình hiện đại thường dùng sampling có kiểm soát,
-ví dụ như temperature hoặc top-k sampling.
-
----
-
-## 5. Hạn chế của N-gram khi sinh câu
-
----
-
-### 5.1 Ngữ cảnh ngắn
-
-Bigram chỉ xét một từ trước đó.  
-Trigram chỉ xét hai từ trước đó.
-
-Do đó, mô hình không nắm được phụ thuộc dài hạn.
-
----
-
-### 5.2 Không hiểu ngữ pháp và ngữ nghĩa
-
-Mô hình chỉ học xác suất, không hiểu cấu trúc ngữ pháp sâu.
-
-Ví dụ có thể sinh:
-
-“The cat love I.”
-
-Vì xác suất cục bộ có thể cao,  
-nhưng cấu trúc toàn câu sai.
-
----
-
----
-
-## 6. Ý nghĩa của phần 3.4
-
-Phần này cho thấy:
-
-Language model là một **generative model**.
-
-Nó không chỉ đánh giá câu,  
-mà còn có thể tạo câu mới dựa trên phân phối đã học.
-
-Đây là nền tảng cho:
-
-- Text generation  
-- Neural language model  
-- Transformer  
-
----
-
----
-
-# CHAPTER 3.5 – GENERALIZING VS OVERFITTING THE TRAINING SET
-
----
-
-## 1. Mục tiêu thực sự của Machine Learning
-
-Mục tiêu của mô hình không phải là:
-
-Giảm lỗi trên training set.
-
-Mục tiêu là:
-
-Hoạt động tốt trên dữ liệu mới.
-
-Khả năng này gọi là **generalization**.
-
-Generalization nghĩa là:
-
-Mô hình có thể khái quát hóa sang dữ liệu chưa từng thấy.
-
----
-
-## 2. Overfitting là gì?
-
-Overfitting xảy ra khi:
-
-- Training perplexity rất thấp  
-- Test perplexity cao  
-
-Điều này có nghĩa:
-
-Mô hình đã học thuộc dữ liệu huấn luyện,  
-nhưng không học được quy luật tổng quát.
-
----
-
-## 3. Overfitting trong N-gram Model
-
-Khi ta tăng N:
-
-Bigram → Trigram → 4-gram → 5-gram
-
-Mô hình trở nên phức tạp hơn.  
-Số lượng tham số tăng rất nhanh.
-
-Nếu dữ liệu không đủ lớn,  
-mô hình sẽ ghi nhớ các chuỗi cụ thể,  
-thay vì học cấu trúc chung.
-
----
-
-## 4. Ví dụ minh họa
-
-Training có câu:
-
-“I love NLP very much.”
-
-Mô hình 5-gram học:
-
-P(much | I love NLP very)
-
-Nhưng test có câu:
-
-“I love NLP so much.”
-
-Chuỗi này chưa từng xuất hiện trong training.
+- Sinh các câu
+- Mỗi câu được chọn theo xác suất mà mô hình gán cho nó
 
 Kết quả:
 
-Xác suất có thể bằng 0.
+- Câu có xác suất cao sẽ xuất hiện thường xuyên hơn
+- Câu có xác suất thấp sẽ xuất hiện hiếm hơn
 
-Đây là dấu hiệu của overfitting.
+Ý tưởng này đã được đề xuất từ rất sớm bởi Shannon (1948).
 
 ---
 
-## 5. Underfitting
+## 2. Sampling trong trường hợp Unigram
 
-Ngược lại với overfitting là **underfitting**.
+Để hiểu rõ nhất, ta xét mô hình unigram.
 
-Xảy ra khi mô hình quá đơn giản.
+Giả sử:
+
+- Mỗi từ trong tiếng Anh chiếm một đoạn trên trục số từ 0 đến 1
+- Độ dài đoạn tỉ lệ với xác suất của từ đó
 
 Ví dụ:
 
-Unigram model không sử dụng ngữ cảnh.
+- “the” chiếm một đoạn lớn
+- “polyphonic” chiếm một đoạn rất nhỏ
 
-Hậu quả:
+Cách sinh từ:
 
-- Training kém  
-- Test cũng kém  
+1. Chọn một số ngẫu nhiên r trong khoảng [0,1]
+2. Xem r rơi vào đoạn nào
+3. In ra từ tương ứng với đoạn đó
 
----
+Vì đoạn của từ phổ biến lớn hơn,
+nên xác suất chọn trúng chúng cao hơn.
 
-## 6. Bias – Variance Tradeoff
+Ta lặp lại quá trình này:
 
-Đây là nguyên lý quan trọng trong machine learning.
+- Sinh từng từ một
+- Cho đến khi sinh ra token kết thúc câu `</s>`
 
-### Bias cao
-
-Mô hình quá đơn giản  
-→ Không học đủ cấu trúc  
-
-### Variance cao
-
-Mô hình quá phức tạp  
-→ Nhạy với training data  
-→ Dễ overfitting  
-
-Ta cần cân bằng giữa bias và variance.
+Đây chính là cách sinh câu bằng unigram.
 
 ---
 
-## 7. Phát hiện Overfitting
+## 3. Sampling với Bigram
 
-So sánh:
+Với bigram, quá trình tương tự nhưng có điều kiện ngữ cảnh.
 
-- Training perplexity  
-- Test perplexity  
+### Bước 1: Chọn bigram bắt đầu bằng `<s>`
 
-Nếu training rất thấp nhưng test cao,  
-mô hình đang overfit.
+Ta chọn ngẫu nhiên một bigram:
 
----
-
-## 8. Cách giảm Overfitting
-
-Một số giải pháp:
-
-1. Giảm N  
-2. Tăng kích thước dữ liệu  
-3. Áp dụng smoothing  
-
-Smoothing giúp:
-
-- Tránh zero probability  
-- Phân bổ xác suất hợp lý hơn  
-
----
-
-
-## 9. Vấn đề OOV khi sinh câu
-
-Một câu hỏi quan trọng:
-
-Điều gì xảy ra nếu một từ chưa từng xuất hiện trong training set,
-nhưng lại xuất hiện khi sinh câu hoặc trong test set?
-
-Ví dụ: từ “Jurafsky”.
-
-Trong N-gram truyền thống:
-
-- Từ này không có trong vocabulary  
-- Xác suất bằng 0  
-- Toàn bộ xác suất câu có thể bằng 0  
-
-Đây gọi là vấn đề **Out-of-Vocabulary (OOV)**.
-
----
-
-### Giải pháp cổ điển
-
-Thay mọi từ hiếm bằng token `<UNK>`.
-
-Nhưng cách này:
-
-- Mất thông tin  
-- Không phân biệt được các từ mới khác nhau  
-
----
-
-### Giải pháp hiện đại: Subword Tokenization
-
-Các mô hình NLP hiện đại không làm việc trực tiếp trên từ nguyên bản.
-
-Chúng tách từ thành các đơn vị con (subword).
-
-Ví dụ:
-
-“Jurafsky”  
-có thể được tách thành các phần nhỏ hơn như:
-
-- Jura  
-- fsky  
-
-Nhờ đó:
-
-- Không còn token hoàn toàn xa lạ  
-- Giảm đáng kể vấn đề OOV  
-
-
----
-
-## 10. Ý nghĩa của phần 3.5
-
-Phần này nhấn mạnh rằng:
-
-Không phải mô hình càng phức tạp càng tốt.
-
-Điều quan trọng nhất là khả năng generalization,
-tức là hoạt động tốt trên dữ liệu mới.
 ```
+
+<s>, w
+
+```
+
+theo xác suất:
+```
+P(w | <s>)
+```
+---
+
+### Bước 2: Tiếp tục theo ngữ cảnh
+
+Giả sử từ vừa sinh là w.
+
+Ta chọn tiếp một bigram bắt đầu bằng w:
+
+```
+
+w, w_next
+
+```
+
+theo xác suất:
+```
+P(w_next | w)
+```
+---
+
+### Bước 3: Lặp lại
+
+Tiếp tục quá trình:
+
+- Dùng từ hiện tại làm ngữ cảnh
+- Lấy phân phối xác suất điều kiện
+- Chọn ngẫu nhiên theo phân phối đó
+
+Dừng lại khi sinh ra `</s>`.
+
+---
+
+## 4. Ý nghĩa khi tăng bậc n
+
+Khi tăng bậc n:
+
+- Unigram → không có tính mạch lạc
+- Bigram → có liên kết cục bộ
+- Trigram → câu bắt đầu có cấu trúc tự nhiên hơn
+- 4-gram → câu có thể rất giống dữ liệu gốc
+
+Ngữ cảnh càng dài:
+
+- Câu càng có vẻ “coherent” (mạch lạc)
+- Mô hình càng phản ánh mạnh dữ liệu huấn luyện
+
+---
+
+## 5. Sampling giúp ta quan sát điều gì?
+
+Sampling cho ta thấy:
+
+- Mô hình đã học được mẫu nào trong dữ liệu
+- Mô hình phụ thuộc vào training corpus đến mức nào
+- Khi tăng n, mô hình dần ghi nhớ các chuỗi dài hơn
+
+Đây là cầu nối dẫn sang phần tiếp theo:
+
+- Khi n tăng quá cao,
+- Mô hình có thể bắt đầu **overfit** dữ liệu huấn luyện.
+
+---
+
+## 6. Kết luận của phần 3.4
+
+Sampling là công cụ trực quan để:
+
+- Hiểu phân phối xác suất mà mô hình học được
+- So sánh sự khác biệt giữa unigram, bigram, trigram
+- Quan sát sự gia tăng tính mạch lạc khi tăng n
+
+Phần này chuẩn bị nền tảng cho vấn đề:
+
+Generalization vs. Overfitting trong phần 3.5.
+
+---
+# CHAPTER 3.5 – GENERALIZING VS. OVERFITTING THE TRAINING SET
+
+---
+
+## 1. N-gram phụ thuộc mạnh vào tập huấn luyện
+
+Giống như nhiều mô hình thống kê khác, n-gram model phụ thuộc trực tiếp vào **training corpus**.
+
+Hai hệ quả quan trọng:
+
+1. Xác suất học được thường phản ánh những đặc điểm rất cụ thể của corpus huấn luyện.  
+2. Khi tăng giá trị của n, mô hình sẽ mô tả training corpus ngày càng tốt hơn.
+
+Điều này nghe có vẻ tích cực, nhưng lại tiềm ẩn vấn đề overfitting.
+
+---
+
+## 2. Tăng bậc n làm câu sinh ra “giống” dữ liệu hơn
+
+Khi dùng phương pháp sampling để sinh câu từ các mô hình:
+
+- Unigram
+- Bigram
+- Trigram
+- 4-gram
+
+huấn luyện trên Shakespeare, ta quan sát được:
+
+- **Unigram**: không có tính mạch lạc, không có cấu trúc câu rõ ràng.
+- **Bigram**: có tính liên kết cục bộ giữa các từ.
+- **Trigram**: bắt đầu trông giống Shakespeare.
+- **4-gram**: câu sinh ra giống Shakespeare đến mức có thể trích nguyên văn.
+
+Ví dụ cụm:
+
+> “It cannot be but so”
+
+xuất hiện trực tiếp trong *King John*.
+
+Điều này xảy ra vì:
+
+- Tập Shakespeare không quá lớn  
+  (N ≈ 884,647 từ, V ≈ 29,066 từ vựng)
+- Ma trận xác suất n-gram cực kỳ thưa (sparse)
+
+Số lượng khả năng:
+```
+- Bigram: V² ≈ 844 triệu  
+- 4-gram: V⁴ ≈ 7 × 10¹⁷  
+```
+Do đó, khi đã chọn một 3-gram cụ thể,
+khả năng lựa chọn từ tiếp theo rất hạn chế.
+
+Mô hình thực chất đang ghi nhớ các chuỗi có sẵn trong dữ liệu.
+
+Đây chính là biểu hiện của **overfitting**.
+
+---
+
+## 3. Phụ thuộc vào miền dữ liệu (Domain Dependence)
+
+Tiếp theo, ta huấn luyện language model trên một corpus hoàn toàn khác:
+**Wall Street Journal (WSJ)**.
+
+Cả Shakespeare và WSJ đều là tiếng Anh.
+
+Tuy nhiên, khi sinh câu từ hai mô hình:
+
+- Hầu như không có sự trùng lặp n-gram.
+- Ngay cả các cụm nhỏ cũng rất khác nhau.
+
+WSJ chứa các cụm như:
+
+- “stock market”
+- “interest rates”
+- “corporation”
+
+Trong khi Shakespeare chứa:
+
+- “thy”
+- “thou”
+- “hath”
+
+Hai tập dữ liệu thuộc hai **phân phối xác suất khác nhau**.
+
+Kết luận:
+
+Nếu training set và test set khác biệt lớn,
+mô hình thống kê sẽ gần như vô dụng trong việc dự đoán.
+
+---
+
+## 4. Hệ quả thực tế khi xây dựng language model
+
+Để tránh vấn đề này:
+
+- Training corpus phải cùng thể loại (genre) với nhiệm vụ.
+
+Ví dụ:
+
+- Dịch văn bản pháp lý → cần corpus pháp lý.
+- Hệ thống hỏi–đáp → cần corpus câu hỏi.
+- Xử lý mạng xã hội → cần dữ liệu mạng xã hội.
+
+---
+
+## 5. Khác biệt về phương ngữ và biến thể ngôn ngữ
+
+Ngay cả trong cùng một ngôn ngữ,
+sự khác biệt về phương ngữ cũng tạo ra phân phối khác nhau.
+
+Ví dụ:
+
+- African American English (AAE)
+- Nigerian Pidgin
+
+Các biến thể này có:
+
+- Từ vựng riêng
+- Mẫu n-gram riêng
+- Cấu trúc riêng
+
+Nếu training corpus không bao phủ các biến thể này,
+mô hình sẽ hoạt động kém.
+
+---
+
+## 6. Vấn đề từ chưa từng thấy (OOV)
+
+Có thể xảy ra trường hợp:
+
+Một từ không xuất hiện trong training set,
+nhưng xuất hiện trong test set.
+
+Ví dụ: “Jurafsky”.
+
+Trong thực tế hiện đại:
+
+Ta không chạy mô hình trực tiếp trên “từ”,
+mà trên **subword tokens**.
+
+Với các thuật toán như BPE:
+
+- Mỗi từ có thể được phân tách thành các đơn vị nhỏ hơn.
+- Thậm chí thành từng ký tự nếu cần.
+
+Do đó:
+
+Test set sẽ không chứa token hoàn toàn chưa từng thấy.
+
+---
+
+## 7. Kết luận của phần 3.5
+
+Phần này nhấn mạnh ba điểm cốt lõi:
+
+1. N-gram model phụ thuộc mạnh vào training corpus.  
+2. Tăng bậc n giúp mô hình khớp training data tốt hơn, nhưng dễ dẫn đến overfitting.  
+3. Mô hình chỉ hoạt động hiệu quả khi training và test cùng phân phối dữ liệu.
+
+Mục tiêu thực sự không phải là mô tả hoàn hảo training set,
+mà là **generalization** — hoạt động tốt trên dữ liệu mới.
+
+
